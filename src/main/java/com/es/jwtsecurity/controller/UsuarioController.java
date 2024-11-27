@@ -3,6 +3,7 @@ package com.es.jwtsecurity.controller;
 import com.es.jwtsecurity.dto.UsuarioLoginDTO;
 import com.es.jwtsecurity.dto.UsuarioRegisterDTO;
 import com.es.jwtsecurity.service.CustomUserDetailsService;
+import com.es.jwtsecurity.service.TokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,8 @@ public class UsuarioController {
     private CustomUserDetailsService customUserDetailsService;
     @Autowired
     private JwtEncoder jwtEncoder;
-
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public String login(
@@ -34,7 +36,9 @@ public class UsuarioController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(usuarioLoginDTO.getUsername(), usuarioLoginDTO.getPassword()) // Modo de autenticación
         );
-        return authentication.toString();
+        // Generamos el token
+        String token = tokenService.generateToken(authentication);
+        return token;
     }
 
 
