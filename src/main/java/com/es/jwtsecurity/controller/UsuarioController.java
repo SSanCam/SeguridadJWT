@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,18 +23,25 @@ public class UsuarioController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
+    @Autowired
+    private JwtEncoder jwtEncoder;
+
 
     @PostMapping("/login")
-    public String login(@RequestBody UsuarioLoginDTO usuarioLoginDTO) {
+    public String login(
+            @RequestBody UsuarioLoginDTO usuarioLoginDTO
+    ) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(usuarioLoginDTO.getUsername(), usuarioLoginDTO.getPassword())
+                new UsernamePasswordAuthenticationToken(usuarioLoginDTO.getUsername(), usuarioLoginDTO.getPassword()) // Modo de autenticación
         );
         return authentication.toString();
     }
 
 
     @PostMapping("/register")
-    public ResponseEntity<UsuarioRegisterDTO> register(@RequestBody UsuarioRegisterDTO usuarioRegisterDTO) {
+    public ResponseEntity<UsuarioRegisterDTO> register(
+            @RequestBody UsuarioRegisterDTO usuarioRegisterDTO
+    ) {
         //System.out.print();
         customUserDetailsService.registerUser(usuarioRegisterDTO);
         return new ResponseEntity<UsuarioRegisterDTO>(usuarioRegisterDTO, HttpStatus.OK);
